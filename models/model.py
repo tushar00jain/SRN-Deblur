@@ -10,6 +10,7 @@ import tensorflow.contrib.slim as slim
 from datetime import datetime
 from util.util import *
 from util.BasicConvLSTMCell import *
+from glob import glob
 
 
 class DEBLUR(object):
@@ -262,7 +263,8 @@ class DEBLUR(object):
     def test(self, height, width, input_path, output_path):
         if not os.path.exists(output_path):
             os.makedirs(output_path)
-        imgsName = sorted(os.listdir(input_path))
+        # imgsName = sorted(os.listdir(input_path))
+        imgsName  = sorted(glob(os.path.join(input_path, "**", "**", "**", "**", "**", "*.png")))
 
         H, W = height, width
         inp_chns = 3 if self.args.model == 'color' else 1
@@ -277,7 +279,8 @@ class DEBLUR(object):
 
         for imgName in imgsName:
             blur = scipy.misc.imread(os.path.join(input_path, imgName))
-            h, w, c = blur.shape
+            bs = blur.shape
+            h, w = bs[0], bs[1]
             # make sure the width is larger than the height
             rot = False
             if h > w:
@@ -302,7 +305,9 @@ class DEBLUR(object):
             start = time.time()
             deblur = sess.run(outputs, feed_dict={inputs: blurPad / 255.0})
             duration = time.time() - start
-            print('Saving results: %s ... %4.3fs' % (os.path.join(output_path, imgName), duration))
+            out_dir = os.path.join(output_path, os.path.dirname(imgName)[1:])
+            os.makedirs(out_dir, exist_ok=True)
+            print('Saving results: %s ... %4.3fs' % (os.path.join(output_path, imgName[1:]), duration))
             res = deblur[-1]
             if self.args.model != 'color':
                 res = np.transpose(res, (3, 1, 2, 0))
