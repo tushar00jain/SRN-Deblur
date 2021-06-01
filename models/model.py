@@ -11,6 +11,7 @@ from datetime import datetime
 from util.util import *
 from util.BasicConvLSTMCell import *
 from glob import glob
+from pathlib2 import Path
 
 
 class DEBLUR(object):
@@ -246,6 +247,7 @@ class DEBLUR(object):
         ckpt = tf.train.get_checkpoint_state(checkpoint_dir)
 
         if step is not None:
+            print(" [*] Restoring checkpoints...")
             ckpt_name = model_name + '-' + str(step)
             self.saver.restore(sess, os.path.join(checkpoint_dir, ckpt_name))
             print(" [*] Reading intermediate checkpoints... Success")
@@ -278,7 +280,7 @@ class DEBLUR(object):
         self.load(sess, self.train_dir, step=523000)
 
         for imgName in imgsName:
-            blur = scipy.misc.imread(os.path.join(input_path, imgName))
+            blur = scipy.misc.imread(os.path.join(input_path, imgName), mode = "RGB")
             bs = blur.shape
             h, w = bs[0], bs[1]
             # make sure the width is larger than the height
@@ -306,7 +308,7 @@ class DEBLUR(object):
             deblur = sess.run(outputs, feed_dict={inputs: blurPad / 255.0})
             duration = time.time() - start
             out_dir = os.path.join(output_path, os.path.dirname(imgName)[1:])
-            os.makedirs(out_dir, exist_ok=True)
+            Path(out_dir).mkdir(exist_ok=True, parents=True)
             print('Saving results: %s ... %4.3fs' % (os.path.join(output_path, imgName[1:]), duration))
             res = deblur[-1]
             if self.args.model != 'color':
@@ -321,4 +323,4 @@ class DEBLUR(object):
 
             if rot:
                 res = np.transpose(res, [1, 0, 2])
-            scipy.misc.imsave(os.path.join(output_path, imgName), res)
+            scipy.misc.imsave(os.path.join(output_path, imgName[1:]), res)

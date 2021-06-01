@@ -1,4 +1,4 @@
 #!/bin/bash
 
 python run_model.py \
-	--input_path=/data/SOTIS/Stabilized --output_path=/cc/results
+	--input_path=/data/SOTIS/Stabilized --output_path=/workdir/results --height 256 --width 256
