@@ -16,6 +16,7 @@ docker run -it --gpus all --name srn -p 8003:8003 -v /media/DataDrive/:/data -v 
 > Train (TODO)
 
 ```bash
+./train.sh
 ```
 
 > Debug Testing
@@ -29,6 +30,8 @@ docker run -it --gpus all --name srn -p 8003:8003 -v /media/DataDrive/:/data -v 
 > Train (TODO)
 
 ```bash
+docker run -d --gpus all --name srn -v /media/DataDrive/:/data -v $(pwd):/workdir srn:0.0.1 ./train.sh
+docker logs srn --tail 100 -f
 ```
 
 > Test
