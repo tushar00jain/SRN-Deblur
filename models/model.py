@@ -12,6 +12,7 @@ from util.util import *
 from util.BasicConvLSTMCell import *
 from glob import glob
 from pathlib2 import Path
+import math
 
 
 class DEBLUR(object):
@@ -25,6 +26,13 @@ class DEBLUR(object):
         self.crop_size = 256
         self.data_list = open(args.datalist, 'rt').read().splitlines()
         self.data_list = list(map(lambda x: x.split(' '), self.data_list))
+
+        train_ratio = 0.75
+        if args.phase == 'train':
+            self.data_list = self.data_list[:math.floor(len(self.data_list) * train_ratio)]
+        else:
+            self.data_list = self.data_list[math.ceil(len(self.data_list) * train_ratio):]
+
         random.shuffle(self.data_list)
         self.train_dir = os.path.join('./checkpoints', args.model)
         if not os.path.exists(self.train_dir):
