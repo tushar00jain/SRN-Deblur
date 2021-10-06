@@ -13,7 +13,7 @@ docker run -it --gpus all --name srn -p 8003:8003 -v /media/DataDrive/:/data -v 
 ./checkpoints/download_model.sh
 ```
 
-> Train (TODO)
+> Train
 
 ```bash
 ./train.sh
@@ -27,7 +27,7 @@ docker run -it --gpus all --name srn -p 8003:8003 -v /media/DataDrive/:/data -v 
 
 ### Run
 
-> Train (TODO)
+> Train
 
 ```bash
 docker run -d --gpus all --name srn -v /media/DataDrive/:/data -v $(pwd):/workdir srn:0.0.1 ./train.sh
