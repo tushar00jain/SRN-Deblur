@@ -35,6 +35,7 @@ class DEBLUR(object):
 
         random.shuffle(self.data_list)
         self.train_dir = os.path.join('./checkpoints', args.model)
+        self.checkpoint_path = os.path.join(self.train_dir, 'checkpoints')
         if not os.path.exists(self.train_dir):
             os.makedirs(self.train_dir)
 
@@ -206,7 +207,7 @@ class DEBLUR(object):
         self.sess = sess
         sess.run(tf.global_variables_initializer())
         self.saver = tf.train.Saver(max_to_keep=50, keep_checkpoint_every_n_hours=1)
-        self.load(sess, self.train_dir)
+        self.load(sess, self.checkpoint_path, step=511000)
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
@@ -241,8 +242,7 @@ class DEBLUR(object):
 
             # Save the model checkpoint periodically.
             if step % 1000 == 0 or step == self.max_steps:
-                checkpoint_path = os.path.join(self.train_dir, 'checkpoints')
-                self.save(sess, checkpoint_path, step)
+                self.save(sess, self.checkpoint_path, step)
 
     def save(self, sess, checkpoint_dir, step):
         model_name = "deblur.model"
@@ -286,7 +286,7 @@ class DEBLUR(object):
         sess = tf.Session(config=tf.ConfigProto(gpu_options=tf.GPUOptions(allow_growth=True)))
 
         self.saver = tf.train.Saver()
-        self.load(sess, self.train_dir)
+        self.load(sess, self.checkpoint_path)
 
         for imgName in imgsName:
             blur = scipy.misc.imread(os.path.join(input_path, imgName), mode = "RGB")
