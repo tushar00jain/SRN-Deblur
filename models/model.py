@@ -206,6 +206,7 @@ class DEBLUR(object):
         self.sess = sess
         sess.run(tf.global_variables_initializer())
         self.saver = tf.train.Saver(max_to_keep=50, keep_checkpoint_every_n_hours=1)
+        self.load(sess, self.train_dir)
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
@@ -224,7 +225,7 @@ class DEBLUR(object):
             # print loss_value
             assert not np.isnan(loss_total_val), 'Model diverged with loss = NaN'
 
-            if step % 5 == 0:
+            if step % 1000 == 0:
                 num_examples_per_step = self.batch_size
                 examples_per_sec = num_examples_per_step / duration
                 sec_per_batch = float(duration)
@@ -233,7 +234,7 @@ class DEBLUR(object):
                 print(format_str % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), step, loss_total_val, 0.0,
                                     0.0, examples_per_sec, sec_per_batch))
 
-            if step % 20 == 0:
+            if step % 1000 == 0:
                 # summary_str = sess.run(summary_op, feed_dict={inputs:batch_input, gt:batch_gt})
                 summary_str = sess.run(summary_op)
                 summary_writer.add_summary(summary_str, global_step=step)
@@ -268,7 +269,7 @@ class DEBLUR(object):
             return ckpt_iter
         else:
             print(" [*] Reading checkpoints... ERROR")
-            return False
+            return 0
 
     def test(self, height, width, input_path, output_path):
         if not os.path.exists(output_path):
