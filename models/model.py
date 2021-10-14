@@ -29,9 +29,9 @@ class DEBLUR(object):
 
         train_ratio = 0.75
         if args.phase == 'train':
-            self.data_list = self.data_list[:math.floor(len(self.data_list) * train_ratio)]
+            self.data_list = self.data_list[:int(math.floor(len(self.data_list) * train_ratio))]
         else:
-            self.data_list = self.data_list[math.ceil(len(self.data_list) * train_ratio):]
+            self.data_list = self.data_list[int(math.ceil(len(self.data_list) * train_ratio)):]
 
         random.shuffle(self.data_list)
         self.train_dir = os.path.join('./checkpoints', args.model)
@@ -285,7 +285,7 @@ class DEBLUR(object):
         sess = tf.Session(config=tf.ConfigProto(gpu_options=tf.GPUOptions(allow_growth=True)))
 
         self.saver = tf.train.Saver()
-        self.load(sess, self.train_dir, step=523000)
+        self.load(sess, self.train_dir)
 
         for imgName in imgsName:
             blur = scipy.misc.imread(os.path.join(input_path, imgName), mode = "RGB")
