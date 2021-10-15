@@ -28,6 +28,7 @@ def parse_args():
 
 
 def main(_):
+    print("Running Version: v1")
     args = parse_args()
 
     # set gpu/cpu mode

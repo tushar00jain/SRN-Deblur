@@ -206,8 +206,8 @@ class DEBLUR(object):
         sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
         self.sess = sess
         sess.run(tf.global_variables_initializer())
-        self.saver = tf.train.Saver(max_to_keep=50, keep_checkpoint_every_n_hours=1)
-        self.load(sess, self.checkpoint_path, step=511000)
+        self.saver = tf.train.Saver(max_to_keep=10, keep_checkpoint_every_n_hours=1)
+        self.load(sess, self.checkpoint_path, step=658000)
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
