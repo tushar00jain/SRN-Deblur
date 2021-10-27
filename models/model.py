@@ -207,7 +207,7 @@ class DEBLUR(object):
         self.sess = sess
         sess.run(tf.global_variables_initializer())
         self.saver = tf.train.Saver(max_to_keep=10, keep_checkpoint_every_n_hours=1)
-        self.load(sess, self.checkpoint_path, step=658000)
+        self.load(sess, self.checkpoint_path, step=983000)
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
@@ -275,7 +275,9 @@ class DEBLUR(object):
         if not os.path.exists(output_path):
             os.makedirs(output_path)
         # imgsName = sorted(os.listdir(input_path))
+        train_ratio = 0.75
         imgsName  = sorted(glob(os.path.join(input_path, "**", "**", "**", "**", "**", "*.png")))
+        imgsName = imgsName[int(math.ceil(len(imgsName) * train_ratio)):]
 
         H, W = height, width
         inp_chns = 3 if self.args.model == 'color' else 1
@@ -286,7 +288,7 @@ class DEBLUR(object):
         sess = tf.Session(config=tf.ConfigProto(gpu_options=tf.GPUOptions(allow_growth=True)))
 
         self.saver = tf.train.Saver()
-        self.load(sess, self.checkpoint_path)
+        self.load(sess, self.train_dir, step=983000)
 
         for imgName in imgsName:
             blur = scipy.misc.imread(os.path.join(input_path, imgName), mode = "RGB")
